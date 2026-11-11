@@ -47,6 +47,7 @@ function Icon({ name, size = 18 }) {
     check: <path d="m5 12 4 4L19 6" />,
     flame: <><path d="M8.5 14.5A4.5 4.5 0 0 0 13 19a4.5 4.5 0 0 0 4.5-4.5c0-2.5-1.5-4-3-5.5-.6 1.6-1.8 2.5-1.8 2.5S10.8 8.8 12 5c-3 2-7 5.5-7 9.5A8 8 0 0 0 13 22a8 8 0 0 0 8-8" /></>,
     close: <><path d="m18 6-12 12M6 6l12 12" /></>,
+    menu: <><path d="M4 6h16M4 12h16M4 18h16" /></>,
     refresh: <><path d="M20 7v5h-5M4 17v-5h5" /><path d="M5.6 9A7 7 0 0 1 18 6l2 1M4 17l2 1a7 7 0 0 0 12.4-3" /></>,
   };
 
@@ -64,6 +65,7 @@ export default function Home() {
   const [quizComplete, setQuizComplete] = useState(false);
   const [progress, setProgress] = useState({ cardsLearned: 0, quizScore: 0, streak: 4 });
   const [hydrated, setHydrated] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -141,9 +143,21 @@ export default function Home() {
         </div>
 
         <p className="nav-label">YOUR SPACE</p>
-        <nav className="side-nav" aria-label="Learning categories">
+        <button
+          className="mobile-menu-toggle"
+          type="button"
+          aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+          aria-expanded={mobileMenuOpen}
+          aria-controls="learning-navigation"
+          onClick={() => setMobileMenuOpen((isOpen) => !isOpen)}
+        >
+          <Icon name={mobileMenuOpen ? "close" : "menu"} size={20} />
+        </button>
+
+        <nav id="learning-navigation" className={`side-nav ${mobileMenuOpen ? "is-open" : ""}`} aria-label="Learning categories">
+          <span className="mobile-nav-label">YOUR SPACE</span>
           {categories.map((category) => (
-            <button className={`nav-item ${activeCategory === category.name ? "is-active" : ""}`} key={category.name} onClick={() => setActiveCategory(category.name)}>
+            <button className={`nav-item ${activeCategory === category.name ? "is-active" : ""}`} key={category.name} onClick={() => { setActiveCategory(category.name); setMobileMenuOpen(false); }}>
               <Icon name={category.icon} size={17} /><span>{category.name}</span>
               {category.name === "Vocabulary" && <span className="nav-count">24</span>}
             </button>
